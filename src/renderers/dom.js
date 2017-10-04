@@ -7,6 +7,7 @@ const ReactDOM = require('react-dom');
 // import ReactDOM from 'react-dom';
 console.log('HIIIII');
 ReactDOM.render(
-  React.createElement('h2', null, 'Hello React2'),
+  <h2> Hello React with JSX2</h2>,
+  // React.createElement('h2', null, 'Hello React2'),
   document.getElementById('root'),
 );
