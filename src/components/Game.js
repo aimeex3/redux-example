@@ -1,16 +1,33 @@
 import React from 'react';
+
 class Game extends React.PureComponent {
+  // constructor() {
+  //   super();
+  //   this.target = 10 + Math.floor(50*Math.random());
+  // }
+
+  // works because stage 2, don't need constructor
+
+  playNumbers = Array.from({length: 6}).map(() =>
+    2 + Math.floor(12*Math.random())
+  );
+
+  target = this.playNumbers.slice(0, 3).reduce((acc, curr) => acc + curr, 0);
+
+  // TODO: shuffle playNumbers
+
   render() {
     return (
       <div>
-        <div style={styles.target}>42</div>
+        <div style={styles.target}>{this.target}</div>
         <div>
-          <div>4</div>
-          <div>3</div>
-          <div>23</div>
-          <div>2</div>
-          <div>44</div>
-          <div>5</div>
+          {
+            this.playNumbers.map((playNumber, index) =>
+              <div key={index} style={styles.playNumber}>
+                {playNumber}
+              </div>
+            )
+          }
         </div>
       </div>
     );
@@ -19,7 +36,19 @@ class Game extends React.PureComponent {
 
 const styles = {
   target: {
-    backgroundColor: '#888'
+    backgroundColor: '#888',
+    margin: '10%',
+    padding: '0.5rem',
+    textAlign: 'center'
+  },
+  playNumber: {
+    border: 'thin solid #c8f7c8',
+    margin: '2.5%',
+    width: '40%',
+    display: 'inline-block',
+    backgroundColor: '#b8ceb8',
+    textAlign: 'center',
+    padding: '.25rem'
   }
 };
 export default Game;
