@@ -105,6 +105,10 @@ class Game extends React.PureComponent {
     }
   }
 
+  componentWillUnmount() {
+    clearInterval(this.intervalId);
+  }
+
   render() {
     const gameStatus = this.gameStatus;
 
@@ -131,6 +135,10 @@ class Game extends React.PureComponent {
         {this.state.remainingSeconds}
         <br/>
         {gameStatus}
+        <br/>
+        {this.gameStatus !== 'PLAYING' &&
+          <button onClick={this.props.reset}>Play Again</button>
+        }
       </div>
     );
   }
