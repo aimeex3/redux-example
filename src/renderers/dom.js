@@ -8,11 +8,24 @@ import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
 
 import App from '../components/App';
-import store from '../store/store';
+import storeConfig from '../store/store';
 
+// ReactDOM.render(
+//   <Provider store={store}>
+//     <App />
+//   </Provider>,
+//   document.getElementById('root'),
+// );
+
+// issue because using exact same store and store is a singleton
 ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
+  <div>
+    <Provider store={storeConfig()}>
+      <App />
+    </Provider>
+    <Provider store={storeConfig()}>
+      <App />
+    </Provider>
+  </div>,
   document.getElementById('root'),
 );
