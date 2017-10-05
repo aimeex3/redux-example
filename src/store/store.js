@@ -2,7 +2,13 @@ import { createStore } from 'redux';
 import mainReducer from './reducers';
 
 const store = createStore(mainReducer, {
-  gameId: 1,
+  global: {
+    gameId: 1
+  },
+  game: {
+    selectedIds: []
+  },
+
 });
 
 export default store;

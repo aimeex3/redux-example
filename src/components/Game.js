@@ -1,7 +1,9 @@
 import React from 'react';
+import shuffle from 'lodash.shuffle'; // don't need to import whole lodash library, only add micro module
+import {connect} from 'react-redux';
 
 import PlayNumber from './PlayNumber';
-import shuffle from 'lodash.shuffle'; // don't need to import whole lodash library, only add micro module
+import {selectId} from '../store/actions';
 
 class Game extends React.PureComponent {
   // after 10 seconds, game over
@@ -9,18 +11,22 @@ class Game extends React.PureComponent {
   // dont need to set game status on state
 
   // class fields
-  state = {
-    // if # was selected, can't select again so need to use state
-    selectedIds: [], // use index
-    remainingSeconds: 10 // needs this or game status
-  };
+  // state = {
+  //   // if # was selected, can't select again so need to use state
+  //   selectedIds: [], // use index
+  //   remainingSeconds: 10 // needs this or game status
+  // };
 
   // running sum doesn't change state of UI / rerendered
+
+  state = {
+    remainingSeconds: 10
+  };
 
   gameStatus = 'PLAYING';
 
   componentDidMount() {
-    // place on this component, doens't need to be on state
+    // // place on this component, doens't need to be on state
     this.intervalId = setInterval(() => {
       this.setState((prevState) => {
         if (prevState.remainingSeconds === 0) {
@@ -30,14 +36,16 @@ class Game extends React.PureComponent {
         return {remainingSeconds: prevState.remainingSeconds - 1};
       });
     }, 1000);
+
+    // can keep remainingSeconds locally
   }
 
   // gameState: PLAYING, WON, LOST
   // anything that is computable in react component, do NOT put it in state
   // depends on selectedIds
-  calcGameStatus = (nextState) => {
+  calcGameStatus = (nextProps, nextState) => {
     console.log('CALC GAME STATUS');
-    const selectedSum = nextState.selectedIds.reduce((acc, curr) =>
+    const selectedSum = nextProps.selectedIds.reduce((acc, curr) =>
       acc + this.playNumbers[curr], 0
     );
     console.log(selectedSum);
@@ -53,28 +61,28 @@ class Game extends React.PureComponent {
 
   }
 
-  selectId = (id) => {
-
-    // imperitive
-    // can use this way of we do not use PureComponent, but that's bad
-    // this doesn't work because shallow compare of the states
-    // const currentSelectedId = this.state.selectedIds;
-    // currentSelectedId.push(id);
-    // // array is equal to an array. object reference is the same
-    // this.setState({selectedIds: currentSelectedId});
-
-    //declarative
-    // concat is ok and works
-    // this.setState((prevState) => {
-    //   return { selectedIds: prevState.selectedIds.concat(id) };
-    // });
-
-    // declarative best way
-    this.setState((prevState) => {
-      return {selectedIds: [...prevState.selectedIds, id]};
-    });
-
-  }
+  // selectId = (id) => {
+  //
+  //   // imperitive
+  //   // can use this way of we do not use PureComponent, but that's bad
+  //   // this doesn't work because shallow compare of the states
+  //   // const currentSelectedId = this.state.selectedIds;
+  //   // currentSelectedId.push(id);
+  //   // // array is equal to an array. object reference is the same
+  //   // this.setState({selectedIds: currentSelectedId});
+  //
+  //   //declarative
+  //   // concat is ok and works
+  //   // this.setState((prevState) => {
+  //   //   return { selectedIds: prevState.selectedIds.concat(id) };
+  //   // });
+  //
+  //   // declarative best way
+  //   this.setState((prevState) => {
+  //     return {selectedIds: [...prevState.selectedIds, id]};
+  //   });
+  //
+  // }
 
   // constructor() {
   //   super();
@@ -94,9 +102,9 @@ class Game extends React.PureComponent {
 
   componentWillUpdate(nextProps, nextState) {
     // do we need new gameStatus
-    if (nextState.selectedIds !== this.state.selectedIds ||
+    if (nextProps.selectedIds !== this.props.selectedIds ||
       nextState.remainingSeconds === 0) {
-      this.gameStatus = this.calcGameStatus(nextState);
+      this.gameStatus = this.calcGameStatus(nextProps, nextState);
     }
 
     // better in terms of logic separation
@@ -127,8 +135,8 @@ class Game extends React.PureComponent {
                 id={index}
                 key={index}
                 number={playNumber}
-                onClick={this.selectId}
-                isDisabled={gameStatus !== 'PLAYING' || this.state.selectedIds.indexOf(index) >= 0}/>
+                onClick={this.props.selectId}
+                isDisabled={gameStatus !== 'PLAYING' || this.props.selectedIds.indexOf(index) >= 0}/>
             )
           }
         </div>
@@ -150,4 +158,9 @@ const styles = () => ({
   padding: '0.5rem',
   textAlign: 'center'
 });
-export default Game;
+
+const mapStateToProps = (state) => ({
+  ...state.game
+});
+
+export default connect(mapStateToProps, {selectId})(Game);

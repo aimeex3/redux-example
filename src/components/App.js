@@ -39,8 +39,19 @@ const App = (props) =>
 
 // only subscribes to state it needs
 const mapStateToProps = (state) => ({
-  gameId: state.gameId
+  gameId: state.global.gameId
 });
+
+// can do this too, or simplify by using {resetGame} as second argument
+// const mapDispatchToProps = (dispatch) => ({
+//   actions: {
+//     resetGame: () => {
+//       dispatch(resetGame());
+//     }
+//   }
+// });
+// export default connect(mapStateToProps, mapDispatchToProps)(App);
+
 export default connect(mapStateToProps, {resetGame})(App);
 
 // This is what `connect()` does internally
